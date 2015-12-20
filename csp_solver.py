@@ -42,11 +42,6 @@ def diff_constraint(var1, var2, shared_domain):
 
     return ( (var1, var2), constraints )
 
-
-
-
-
-
 class CSP:
     def __init__(self, Xlist, Dlist, Clist):
         # assumes that len(Xlist) == len(Dlist)
@@ -74,28 +69,9 @@ class CSP:
         return dict(self.constraints)
     
 
-
 # Given a dictionary of assignments, determine if it is partial
 def is_partial(assignment):
     return (None in list(assignment.values()))
-
-# if partial assignment, assigns to something that isn't assigned
-# else, randomly sets a variable to something new in its domain
-def assign(assignment, domains):
-    if is_partial(assignment):
-        for var in assignment:
-            if assignment[var] is None:
-                assignment[var] = domains[v][0]
-                return
-    else:
-        for var in assignment:
-            if domains[var]:
-                assignment[var] = domains[var][0]
-                return
-    
-def reassign(assignment, var, domains):
-    domain = domains[var]
-    assignment[var] = domain[0]
 
 def is_valid(assignment, constraints):
     if is_partial(assignment): return False
