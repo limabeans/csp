@@ -18,6 +18,8 @@
 # |        D           |         |
 # |------------------------------|
 
+
+
 # Possible solution: {A=red, B=blue, C=green, D=orange, E=red}
 # Where X = [A, B, C, D, E]
 # Where D = [[red,blue,green,orange], ..., ..]
@@ -97,7 +99,6 @@ def reassign(assignment, var, domains):
 
 def is_valid(assignment, constraints):
     if is_partial(assignment): return False
-
     for var in assignment:
         d = constraints[var]
         for var2 in d:
@@ -118,18 +119,22 @@ def solve_csp(csp):
 
     # dfs
     def dfs(depth):
-        if is_valid(assignment, constraints):
-            return assignment
-        else:
-            curr = variables[depth]
-            for val in domains[curr]:
-                assignment[curr] = val
-                if 1+depth < len(variables):
-                    dfs(1+depth)
-    dfs(0)
-                    
-        
-# a-b-c-a in a triangle
+        curr = variables[depth]
+        for val in domains[curr]:
+            assignment[curr] = val
+            if is_valid(assignment, constraints):
+                return assignment
+            if 1+depth < len(variables):
+                rec = dfs(1+depth)
+                if rec:
+                    return rec
+    return dfs(0)
+  
+
+
+
+# small test example                  
+# a-b-c-a in a triangle map
 map_variables = ['a','b','c']
 map_domains = [['red','green','blue'] for _ in range(3)]
 map_constraints = []
@@ -140,7 +145,23 @@ for i in range(len(map_variables)):
             domain = ['red','green','blue']
             map_constraints.append(diff_constraint(v1,v2,domain))
 map_csp = CSP(map_variables, map_domains, map_constraints)
-    
+map_sol = {'a': 'green', 'b': 'red', 'c': 'blue'}
+# print(is_valid(map_sol, map_csp.get_constraints()))
 
 
     
+map2X = ['A','B','C','D','E']
+map2D = [['red','green','orange','blue'] for _ in range(5)]
+map2_constr = []
+map2_neighbors = {
+    'A': ['B','C'],
+    'B': ['A','C','D','E'],
+    'C': ['A','B','D'],
+    'D': ['B','C','E'],
+    'E': ['B','D'] }
+for v in map2X:
+    for nei in map2_neighbors[v]:
+        domain=['red','green','blue','orange']
+        map2_constr.append(diff_constraint(v,nei,domain))
+
+map2_csp = CSP(map2X, map2D, map2_constr)   
